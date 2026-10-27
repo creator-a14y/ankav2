@@ -32,7 +32,7 @@ The system features an independent hardware architecture that separates flight c
 
 ## 📊 Hardware Components and Bill of Materials (BOM)
 
-Based on the data from `anka\_maliyet.xlsx`, the estimated budget table for 1 drone is as follows (based on September 2026 market figures):
+Based on the data from `anka\\\_maliyet.xlsx`, the estimated budget table for 1 drone is as follows (based on September 2026 market figures):
 
 |#|Category|Part / Product|Source / Reference|Qty|Unit Price (TL)|Total (TL)|
 |-|-|-|-|-|-|-|
