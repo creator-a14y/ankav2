@@ -2,7 +2,7 @@
 
 
 
-[![Türkçe](https://img.shields.io/badge/Dil-Türkçe-blue)](https://github.com/creator-a14y/ankav2/tree/tr) [![English](https://img.shields.io/badge/Language-English-red)](https://github.com/creator-a14y/ankav2/tree/main)
+[![🇹🇷 Türkçe'ye Geç](https://img.shields.io/badge/README-T%C3%BCrk%C3%A7e%27ye%20Ge%C3%A7-blue?style=for-the-badge)](https://github.com/creator-a14y/ankav2/tree/tr)
 
 
 
