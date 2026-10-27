@@ -1,51 +1,51 @@
-# ANKA-v2 Zincir Düğüm ve Yangın Algılama İHA Projesi
+# ANKA-v2: Chain Node and Fire Detection UAV Project
 
-ANKA-v2; otonom yangın algılama, termal görüntü işleme, GPS konum tespiti ve düğümler arası kablosuz (WiFi Mesh/Relay) veri aktarımı gerçekleştirmek üzere tasarlanmış modüler bir İHA ve haberleşme altyapısı projesidir.
+ANKA-v2 is a modular UAV and communication infrastructure project designed for autonomous fire detection, thermal image processing, GPS position fixing, and inter-node wireless data transmission (Wi-Fi Mesh/Relay).
 
-Proje; arama-tarama ve yangın tespit görevlerini icra eden tespit düğümü ile bu verileri yer kontrol istasyonuna aktaran röle (zincir) düğümlerinden oluşur.
-
----
-
-## Sistem Mimarisi ve Çalışma Prensibi
-
-Sistem, uçuş kontrolü ve faydalı yük (payload) işlemlerini birbirinden ayıran bağımsız bir donanım mimarisine sahiptir:
-
-* **Uçuş Kartı (Kart 1):** Uçuş kontrolcüsü olarak `flight32` kullanılmaktadır. Payloaddan (Kart 2) tamamen bağımsız çalışır. RC sinyali kesildiğinde motorları kesen Failsafe doğrulaması uçuş öncesinde sahada test edilir.
-* **Payload Kartı (Kart 2):** Deneyap Kart v2 (ESP32-S3) üzerindedir. Termal kamera, kamera ve GPS modülünü yönetir.
-* **Termal Tetikleme (Dinamik Eşik):** Adafruit MLX90640 termal kamerası ortam sıcaklığını taranan kare üzerinden okur. Maksimum sıcaklık mutlak tabanı ($45.0^{\circ}C$) ve ortam ortalamasından fark eşiğini ($20.0^{\circ}C$) aynı anda aştığında sistem yangın tespiti yapar.
-* **Görsel ve Konum Verisi Toplama:** Termal tetikleme sağlandığında OV2640 kameradan JPEG fotoğraf çekilir ve Deneyap GPS/GLONASS modülünden anlık koordinatlar (GGA cümlesinden enlem ve boylam) okunur.
-* **Zincir Aktarımı (Relay/Mesh):** Elde edilen veri paketi, zincirdeki bir sonraki düğümün Erişim Noktasına (AP) iletilir. Düğümler arası iletişim nöbetleşe yapıdadır; arka düğümden gelen veri forward edilir (relaylenir).
+The system consists of **detection nodes** executing search-and-scan and fire detection tasks, and **relay (chain) nodes** that forward this data to the ground control station.
 
 ---
 
-## Donanım Bileşenleri ve Maliyet Özeti (BOM)
+## 📌 Project Objective
 
-Yüklenen `anka_maliyet.xlsx` dosyasındaki verilere göre 1 dron için tahmini bütçe tablosu aşağıdadır (Eylül 2026 piyasa verilerine göre):
-
-| # | Kategori | Parça / Ürün | Kaynak / Referans | Adet | Birim (TL) | Toplam (TL) |
-|---|---|---|---|:---:|:---:|:---:|
-| **1** | Uçuş Kartı | Deneyap Kart v2 (ESP32-S3) | magaza.deneyapkart.org | 1 | 727 TL | 727 TL |
-| **2** | Motor | 2205 2300KV Fırçasız Motor (CW+CCW set) | promodelhobby.com | 4 | 670 TL | 2.680 TL |
-| **3** | ESC | 60A BLHeli_S 4-in-1 ESC (DShot, 30.5×30.5mm) | AliExpress TR | 1 | 1.446 TL | 1.446 TL |
-| **4** | Pervane | 5045 Pervane seti (CW+CCW, 2 çift) | f1depo.com | 1 | 150 TL | 150 TL |
-| **5** | Batarya | 4S 1500mAh 95C LiPo Batarya | robotzade.com | 1 | 3.216 TL | 3.216 TL |
-| **6** | BEC | 5V 3A UBEC (LiPo→5V) | robotzade.com / robotsepeti.com | 1 | 280 TL | 280 TL |
-| **7** | IMU | MPU9250 IMU Modülü (I2C, 9 eksen) | amazon.com.tr | 1 | 400 TL | 400 TL |
-| **8** | Kumanda / Alıcı | Flysky FS-i6X Kumanda + FS-iA6B Alıcı seti | promodelhobby.com | 1 | 4.279 TL | 4.279 TL |
-| **9** | Şasi | 5" FPV Quadcopter Çerçeve (210-250mm, karbon) | Piyasa tahmini | 1 | 800 TL | 800 TL |
-| **10** | Güç | XT60 LiPo Konnektörü (dişi+erkek çift) | Genel piyasa | 1 | 75 TL | 75 TL |
-| **11** | Bağlantı | Kablo, vida, standoff, ısıyla küçülen boru | Genel piyasa | 1 | 150 TL | 150 TL |
-| **12** | Payload Kartı | Deneyap Kart v2 (ESP32-S3) | magaza.deneyapkart.org | 1 | 727 TL | 727 TL |
-| **13** | Kamera | Deneyap Kamera (OV2640, FPC) | robolinkmarket.com | 1 | 715 TL | 715 TL |
-| **14** | Termal Kamera | MLX90640 Termal Kamera (32×24, I2C) | direnc.net | 1 | 3.303 TL | 3.303 TL |
-| **15** | GPS | Deneyap GPS/GLONASS Modülü (Quectel L86) | magaza.deneyapkart.org | 1 | 900 TL | 900 TL |
-| **16** | Bağlantı | I2C Bağlantı Kablosu (10cm, 2 adet) | Modül ile gelebilir | 2 | 30 TL | 60 TL |
-| **17** | Programlama | USB Kablo (Type-C, programlama) | Genel piyasa | 2 | 100 TL | 200 TL |
-| **18** | Şarj Aleti | LiPo Şarj Aleti (dengeli şarj, 4S uyumlu) | Genel piyasa | 1 | 700 TL | 700 TL |
-| **TOPLAM** | | | | | | **20.808 TL** |
+The primary objective of the ANKA-v2 project is to autonomously detect fires at an early stage in forested, mountainous, or vast rural areas. It transmits real-time thermal/visual data and GPS coordinates from the scanned region seamlessly and rapidly to the Ground Control Station via an inter-drone wireless chain/relay (Mesh/Relay) network, without relying on cellular (GSM) networks or internet infrastructure.
 
 ---
 
-## Projenin Amacı
+## 🛠️ System Architecture and Operating Principle
 
-ANKA-v2 projesinin temel amacı; ormanlık, dağlık veya geniş karasal alanlarda meydana gelebilecek yangınları **otonom olarak erken aşamada tespit etmek**, taranan bölgedeki anlık termal/görsel verileri ve GPS koordinatlarını **GSM (hücresel ağ) veya internet altyapısına ihtiyaç duymadan**, dronlar arası kurulan kablosuz zincir/röle (Mesh/Relay) haberleşme ağı üzerinden **Yer Kontrol İstasyonuna kesintisiz ve hızlı bir şekilde aktarmaktır**.
+The system features an independent hardware architecture that separates flight control operations from payload processing:
+
+* **Flight Controller (Board 1):** `flight32` is used as the flight controller and operates completely independently of the payload (Board 2). Failsafe verification, which cuts motor power upon RC signal loss, is tested in the field prior to flight.
+* **Payload Board (Board 2):** Built on the Deneyap Card v2 (ESP32-S3), managing the thermal camera, optical camera, and GPS module.
+* **Thermal Triggering (Dynamic Threshold):** The Adafruit MLX90640 thermal camera reads the ambient temperature across the scanned frame. The system registers a fire detection event when the maximum temperature simultaneously exceeds the absolute baseline ($45.0^\circ\text{C}$) and the differential threshold from the ambient average ($20.0^\circ\text{C}$).
+* **Visual and Location Data Collection:** Upon thermal triggering, a JPEG image is captured using the OV2640 camera, and instantaneous coordinates (latitude and longitude from the NMEA GGA sentence) are retrieved from the Deneyap GPS/GLONASS module.
+* **Chain Transmission (Relay/Mesh):** The collected data packet is forwarded to the Access Point (AP) of the next node in the chain. Inter-node communication operates in a relay manner, where data received from a preceding node is forwarded down the line.
+
+---
+
+## 📊 Hardware Components and Bill of Materials (BOM)
+
+Based on the data from `anka_maliyet.xlsx`, the estimated budget table for 1 drone is as follows (based on September 2026 market figures):
+
+| # | Category | Part / Product | Source / Reference | Qty | Unit Price (TL) | Total (TL) |
+|---|---|---|---|---|---|---|
+| 1 | Flight Controller | Deneyap Card v2 (ESP32-S3) | magaza.deneyapkart.org | 1 | 727 TL | 727 TL |
+| 2 | Motor | 2205 2300KV Brushless Motor (CW+CCW set) | promodelhobby.com | 4 | 670 TL | 2,680 TL |
+| 3 | ESC | 60A BLHeli_S 4-in-1 ESC (DShot, 30.5×30.5mm) | AliExpress TR | 1 | 1,446 TL | 1,446 TL |
+| 4 | Propeller | 5045 Propeller Set (CW+CCW, 2 pairs) | f1depo.com | 1 | 150 TL | 150 TL |
+| 5 | Battery | 4S 1500mAh 95C LiPo Battery | robotzade.com | 1 | 3,216 TL | 3,216 TL |
+| 6 | BEC | 5V 3A UBEC (LiPo→5V) | robotzade.com / robotsepeti.com | 1 | 280 TL | 280 TL |
+| 7 | IMU | MPU9250 IMU Module (I2C, 9-axis) | amazon.com.tr | 1 | 400 TL | 400 TL |
+| 8 | Transmitter / Receiver | Flysky FS-i6X Transmitter + FS-iA6B Receiver Set | promodelhobby.com | 1 | 4,279 TL | 4,279 TL |
+| 9 | Frame | 5" FPV Quadcopter Frame (210-250mm, Carbon) | Market estimate | 1 | 800 TL | 800 TL |
+| 10 | Power | XT60 LiPo Connector (Female+Male pair) | General market | 1 | 75 TL | 75 TL |
+| 11 | Wiring & Hardware | Cables, screws, standoffs, heat shrink tubing | General market | 1 | 150 TL | 150 TL |
+| 12 | Payload Controller | Deneyap Card v2 (ESP32-S3) | magaza.deneyapkart.org | 1 | 727 TL | 727 TL |
+| 13 | Optical Camera | Deneyap Camera (OV2640, FPC) | robolinkmarket.com | 1 | 715 TL | 715 TL |
+| 14 | Thermal Camera | MLX90640 Thermal Camera (32×24, I2C) | direnc.net | 1 | 3,303 TL | 3,303 TL |
+| 15 | GPS | Deneyap GPS/GLONASS Module (Quectel L86) | magaza.deneyapkart.org | 1 | 900 TL | 900 TL |
+| 16 | Wiring | I2C Connection Cable (10cm, 2 pcs) | May come with module | 2 | 30 TL | 60 TL |
+| 17 | Programming | USB Cable (Type-C, programming) | General market | 2 | 100 TL | 200 TL |
+| 18 | Charger | LiPo Battery Charger (Balance charger, 4S compatible) | General market | 1 | 700 TL | 700 TL |
+| | | **TOTAL** | | | | **20,808 TL** |
